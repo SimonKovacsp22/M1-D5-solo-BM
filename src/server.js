@@ -5,6 +5,7 @@ import reviewsRouter from "./apis/reviews/index.js";
 import filesRouter from "./apis/files/index.js";
 import cors from 'cors';
 import { publicFolderPath } from "./lib/utilities.js";
+import { badRequestHandler, unauthorizedHandler, notFoundHandler, genericServerErrorHandler} from "./apis/errorHandlers.js";
 
 
 const server = express()
@@ -18,6 +19,11 @@ server.use(express.json())
 server.use("/products",productsRouter)
 server.use("/products",reviewsRouter)
 server.use("/files",filesRouter)
+
+server.use(badRequestHandler)
+server.use(unauthorizedHandler)
+server.use(notFoundHandler)
+server.use(genericServerErrorHandler)
 
 server.listen(port,() => {
     console.table(listEndpoints(server))

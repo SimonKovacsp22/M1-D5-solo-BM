@@ -46,7 +46,7 @@ export const getProducts = async (req,res,next) => {
             res.send(filteredProductsByCategory)
 
         }else{
-            res.send({products})
+            res.send(products)
     }
 
         

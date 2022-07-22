@@ -1,10 +1,11 @@
 import express from 'express'
 import {postProduct,getProducts, getSingleProduct,updateSingleProduct,deleteSingleProduct} from '../../lib/utilities.js'
+import { checkProductSchema,checkValidationResult } from './validation.js'
 
 
 const productsRouter = express.Router()
 
-productsRouter.post("/",postProduct)
+productsRouter.post("/",checkProductSchema,checkValidationResult,postProduct)
 
 productsRouter.get("/",getProducts)
 
