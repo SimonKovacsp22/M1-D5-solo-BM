@@ -35,7 +35,7 @@ brand:{
 price:{
     in: ["body"],
 
-    isNumber: {
+    isNumeric: {
       errorMessage: "Price is a mandarory field and must be a numbe4r!",
     },
   
