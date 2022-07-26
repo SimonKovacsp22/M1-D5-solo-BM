@@ -16,7 +16,7 @@ import {
 const port = process.env.PORT;
 const server = express();
 
-const whitelist = ['http://localhost:3001', 'https://mywonderfulife.com']
+const whitelist = ['http://localhost:3001', process.env.WEB_ORIGIN, process.env.FE_ORIGIN]
 
 server.use(
   cors({
