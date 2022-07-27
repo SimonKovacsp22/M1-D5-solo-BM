@@ -1,9 +1,9 @@
 import express from "express"
 import multer from "multer"
 import { extname } from "path"
-import { pipeline } from "stream/promises"
+import { pipeline } from "stream"
 import { getPDFReadableStream } from "../../lib/pdf-utilities.js"
-import { getProducts, readProducts, saveFileToProductImages, writeProducts } from "../../lib/utilities.js"
+import {  readProducts, saveFileToProductImages, writeProducts } from "../../lib/utilities.js"
 
 
 const filesRouter = express.Router()
