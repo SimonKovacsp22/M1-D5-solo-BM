@@ -38,7 +38,7 @@ filesRouter.post("/imageUrl/:id", multer({ limits: { fileSize: 1024 * 1024 } }).
     }
   })
 
-  filesRouter.get("/:id/PDF", async (req,res,next) => {
+  filesRouter.get("/:id/PDF", async (req, res, next) => {
     try {
 
       const products = await readProducts()
