@@ -1,5 +1,5 @@
 import PdfPrinter from "pdfmake"
-import join from "path"
+import {join} from "path"
 
 export const getPDFReadableStream = product => {
     const fonts = {
