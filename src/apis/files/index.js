@@ -22,7 +22,7 @@ filesRouter.post("/imageUrl/:id", multer({ limits: { fileSize: 1024 * 1024 } }).
 
      const productToUpdate = products[productToUpdateIndex]
 
-     const updatedProduct = {...productToUpdate, imageUrl: `http://localhost:3002/images/products/${fileName}` }
+     const updatedProduct = {...productToUpdate, imageUrl: `${process.env.WEB_ORIGIN}images/products/${fileName}` }
       
       products[productToUpdateIndex] = updatedProduct
 
