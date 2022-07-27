@@ -19,7 +19,7 @@ export const getPDFReadableStream = product => {
             text: [product.name, product.category, product.brand, product.description, product.price]
         },
         {
-			image: join(process.cwd(),"./public/images/undefined.jpeg")
+			image: join("/public/images/undefined.jpeg")
 		}
             
         
