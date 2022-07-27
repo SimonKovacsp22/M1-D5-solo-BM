@@ -3,7 +3,7 @@
     "name": "5250",
     "description": "somthing longer",
     "brand": "nokia",
-    "imageUrl": "http://localhost:3002/images/products/243jgnwl5w9ggft.jpg",
+    "imageUrl": "",
     "price": 150,
     "category": "smartphones",
     "product_id": "243jgnwl5w9ggft",
