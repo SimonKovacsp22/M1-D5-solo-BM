@@ -1,4 +1,5 @@
 import PdfPrinter from "pdfmake"
+import join from "path"
 
 export const getPDFReadableStream = product => {
     const fonts = {
@@ -18,7 +19,7 @@ export const getPDFReadableStream = product => {
             text: [product.name, product.category, product.brand, product.description, product.price]
         },
         {
-			image: product.imageUrl
+			image: join(process.cwd,"./public/images/undefined.jpeg")
 		}
             
         
