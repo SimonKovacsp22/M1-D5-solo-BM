@@ -45,7 +45,7 @@ filesRouter.post("/imageUrl/:id", multer({ limits: { fileSize: 1024 * 1024 } }).
 
       const productToPdf = products.find(product => product.product_id === req.params.id)
 
-      res.setHeader("Content-Disposition", `attachment; filename=${req.params.id.pdf}` )
+      res.setHeader("Content-Disposition", `attachment; filename=${req.params.id}.pdf` )
 
       const source = getPDFReadableStream(productToPdf)
       const destination = res
