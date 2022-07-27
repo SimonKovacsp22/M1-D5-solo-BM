@@ -17,9 +17,9 @@ export const getPDFReadableStream = product => {
            {
             text: [product.name, product.category, product.brand, product.description, product.price]
         },
-        {
-			image: product.imageUrl
-		}
+        // {
+		// 	image: product.imageUrl
+		// }
             
         
         ]
