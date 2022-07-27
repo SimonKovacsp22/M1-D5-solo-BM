@@ -10,8 +10,7 @@ export const getPDFReadableStream = product => {
   
     const printer = new PdfPrinter(fonts)
  
-  
-    console.log(tableContent)
+
   
     const docDefinition = {
         content: [
