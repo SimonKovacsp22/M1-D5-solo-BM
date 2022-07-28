@@ -2,6 +2,7 @@ import { fileURLToPath } from "url"
 import { dirname, join } from "path"
 import fs from "fs-extra"
 import uniqid from 'uniqid'
+import { sendEmail } from "./email-tools.js"
 
 
 export const dataFolderPath = join(dirname(fileURLToPath(import.meta.url)),"../data")
@@ -26,7 +27,13 @@ export const postProduct = async (req,res,next) => {
 
     await writeProducts(products)
 
-    res.status(201).send({id: newProduct.product_id})
+    await sendEmail(process.env.RECIPIENT_EMAIL,JSON.stringify(newProduct.name))
+
+    
+
+
+
+    res.status(201).send({id: newProduct.product_id, message: "New product was sent to us in an email"})
 
 
 } catch(error){
@@ -118,3 +125,5 @@ export const writeProducts = productsArray => fs.writeJSON(productsJSONPath,prod
 export const readProducts = () => fs.readJSON(productsJSONPath)
 
 export const saveFileToProductImages = (fileName, contentAsBuffer) => fs.writeFile(join(productImagesFolderPath, fileName), contentAsBuffer)
+
+export const getProductsReadableStream = () => fs.createReadStream(productsJSONPath)
