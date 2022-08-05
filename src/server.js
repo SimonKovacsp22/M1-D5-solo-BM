@@ -11,7 +11,7 @@ import {
   unauthorizedHandler,
   notFoundHandler,
   genericServerErrorHandler,
-} from "./apis/errorHandlers.js";
+} from "./lib/errorHandlers.js";
 
 const port = process.env.PORT;
 const server = express();

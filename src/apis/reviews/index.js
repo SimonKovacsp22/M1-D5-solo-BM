@@ -9,10 +9,10 @@ reviewsRouter.post("/:product_id/reviews",postReviewForProduct)
 
 reviewsRouter.get("/:product_id/reviews",getReviewsForProduct)
 
-reviewsRouter.get("/:product_id/reviews/:id",getSingleReview)
+reviewsRouter.get("/reviews/:id",getSingleReview)
 
 reviewsRouter.put("/reviews/:id",updateReview)
 
-reviewsRouter.delete("/reviews/:id",deleteReview)
+reviewsRouter.delete("/:product_id/reviews/:id",deleteReview)
 
 export default reviewsRouter
