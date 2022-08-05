@@ -1,18 +1,17 @@
 import express from 'express'
-import {postProduct,getProducts, getSingleProduct,updateSingleProduct,deleteSingleProduct} from '../../lib/utilities.js'
-import { checkProductSchema,checkValidationResult } from './validation.js'
+import {postProduct,getProducts,getProductById,updateProduct,deleteProduct} from '../../lib/utilities.js'
 
 
 const productsRouter = express.Router()
 
-productsRouter.post("/",checkProductSchema,checkValidationResult,postProduct)
+productsRouter.post("/",postProduct)
 
 productsRouter.get("/",getProducts)
 
-productsRouter.get("/:id",getSingleProduct)
+productsRouter.get("/:id",getProductById)
 
-productsRouter.put("/:id",updateSingleProduct)
+productsRouter.put("/:id",updateProduct)
 
-productsRouter.delete("/:id",deleteSingleProduct)
+productsRouter.delete("/:id",deleteProduct)
 
 export default productsRouter
