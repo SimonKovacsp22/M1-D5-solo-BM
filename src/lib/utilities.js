@@ -1,40 +1,23 @@
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
-import fs from "fs-extra"
-import uniqid from 'uniqid'
 import { sendEmail } from "./email-tools.js"
+import ProductsModel from "../apis/products/model.js"
+import createHttpError from "http-errors"
 
 
-export const dataFolderPath = join(dirname(fileURLToPath(import.meta.url)),"../data")
 
- const productsJSONPath =  join(dataFolderPath,"products.json")
-
-export const publicFolderPath =join(process.cwd(),"./public")
-
-const productImagesFolderPath = join(publicFolderPath,"./images/products")
 
 
 
 
 
 export const postProduct = async (req,res,next) => {
+
    try{
-    const products = await readProducts()
+
+    const newProduct = new ProductsModel(req.body)
+
+    const {_id} = await newProduct.save()
     
-    const newProduct = {...req.body, product_id: uniqid(), createdAt: new Date(), updatedAt: new Date()}
-
-    products.push(newProduct)
-
-    await writeProducts(products)
-
-    await sendEmail(process.env.RECIPIENT_EMAIL,JSON.stringify(newProduct.name))
-
-    
-
-
-
-    res.status(201).send({id: newProduct.product_id, message: "New product was sent to us in an email"})
-
+    res.status(201).send({ id: _id})
 
 } catch(error){
     next(error)
@@ -43,73 +26,42 @@ export const postProduct = async (req,res,next) => {
 
 export const getProducts = async (req,res,next) => {
     try{
+       
+        const products = await ProductsModel.find().populate("reviews")
 
-        const products = await readProducts()
-
-        if(req.query && req.query.category){
-
-            const filteredProductsByCategory = products.filter(product => product.category === req.query.category)
-
-            res.send(filteredProductsByCategory)
-
-        }else{
-            res.send(products)
-    }
-
-        
-
+        res.send(products)
+       
     } catch(error) {
+        
         next(error)
     }
 }
 
-export const getSingleProduct = async (req,res,next) => {
+export const getProductById = async (req,res,next) => {
+
     try{
 
-        const products = await readProducts()
+        const product = await ProductsModel.findById(req.params.id).populate("reviews")
 
-        const requestedProduct = products.find(product => product.product_id === req.params.id)
+        if(!product) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
 
-        res.send(requestedProduct)
+        res.send(product)
 
     }catch(error){
+
         next(error)
     }
 }
 
-export const updateSingleProduct = async (req,res,next) => {
+export const updateProduct = async (req,res,next) => {
+
     try{
 
-        const products = await readProducts()
+        const updatedProduct = await ProductsModel.findByIdAndUpdate( req.params.id, req.body, {new:true, runValidators:true})
 
-        const productToUpdateIndex = products.findIndex(product => product.product_id === req.params.id)
+        if(!updatedProduct) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
 
-        const productToUpdate = products[productToUpdateIndex]
-
-        const updatedProduct = {...productToUpdate, ...req.body, updatedAt: new Date()}
-
-        products[productToUpdateIndex] = updatedProduct
-
-        await writeProducts(products)
-
-        res.send(updatedProduct)
-
-    }catch(error){
-        next(error)
-    }
-}
-
-
-export const deleteSingleProduct = async (req,res,next) => {
-    try{
-
-        const products = await readProducts()
-
-        const remainingProducts = products.filter (product => product.product_id !== req.params.id)
-
-        await writeProducts(remainingProducts)
-
-        res.status(204).send("product with id:"+ req.params.id +"was deleted")
+       res.send(updatedProduct)
 
     }catch(error){
         next(error)
@@ -117,13 +69,22 @@ export const deleteSingleProduct = async (req,res,next) => {
 }
 
 
+export const deleteProduct = async (req,res,next) => {
+
+    try{
+
+        const deletedProdut = await ProductsModel.findByIdAndDelete(req.params.id)
+
+        if(!deleteProduct) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
+        
+        res.status(204).send()
+
+    }catch(error){
+        next(error)
+    }
+}
 
 
 
-export const writeProducts = productsArray => fs.writeJSON(productsJSONPath,productsArray)
 
-export const readProducts = () => fs.readJSON(productsJSONPath)
 
-export const saveFileToProductImages = (fileName, contentAsBuffer) => fs.writeFile(join(productImagesFolderPath, fileName), contentAsBuffer)
-
-export const getProductsReadableStream = () => fs.createReadStream(productsJSONPath)

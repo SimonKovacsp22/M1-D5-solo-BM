@@ -4,14 +4,14 @@ import productsRouter from "./apis/products/index.js";
 import reviewsRouter from "./apis/reviews/index.js";
 import filesRouter from "./apis/files/index.js";
 import createHttpError from "http-errors";
+import mongoose from "mongoose";
 import cors from "cors";
-import { publicFolderPath } from "./lib/utilities.js";
 import {
   badRequestHandler,
   unauthorizedHandler,
   notFoundHandler,
   genericServerErrorHandler,
-} from "./apis/errorHandlers.js";
+} from "./lib/errorHandlers.js";
 
 const port = process.env.PORT;
 const server = express();
@@ -37,7 +37,7 @@ server.use(
   })
 );
 
-server.use(express.static(publicFolderPath));
+
 
 server.use(express.json());
 
@@ -50,7 +50,13 @@ server.use(unauthorizedHandler);
 server.use(notFoundHandler);
 server.use(genericServerErrorHandler);
 
+mongoose.connect(process.env.MONGO_CON_URL)
+
+mongoose.connection.on("connected",()=>{
+  console.log("success")
+
 server.listen(port, () => {
   console.table(listEndpoints(server));
   console.log("Server is running on port:", port);
-});
+})
+})

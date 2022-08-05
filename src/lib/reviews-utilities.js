@@ -1,107 +1,103 @@
-import {  join } from "path"
-import {dataFolderPath} from "./utilities.js"
-import fs from "fs-extra"
-import uniqid from 'uniqid'
+import ReviewsModel from "../apis/reviews/model.js"
+import ProductsModel from "../apis/products/model.js"
+import createHttpError from "http-errors"
 
 
-
-export const reviewsJSONPath =  join(dataFolderPath,"reviews.json")
-
-export const writeReviews = reviewsArray => fs.writeJSON(reviewsJSONPath,reviewsArray)
-
-export const readReviews = () => fs.readJSON(reviewsJSONPath)
 
 
 
 
 export const postReviewForProduct = async (req,res,next) => {
+
     try{
 
-        const reviews = await readReviews()
+        const review = new ReviewsModel(req.body)
 
-        const newReview = {...req.body, productId: req.params.product_id, review_id: uniqid(), createdAt: new Date(), updatedAt: new Date()}
+        const {_id} = await  review.save()
 
-        reviews.push(newReview)
+        const product = await ProductsModel.findByIdAndUpdate(req.params.product_id, { $push: { reviews: _id}}, { new: true, runValidators: true} )
 
-        await writeReviews(reviews)
+        if(!product) return next(createHttpError(404,`product with id: ${req.params.product_id} not foud`))
 
-        res.status(201).send({id: newReview.review_id})
-
+        res.status(201).send(product)
+        
     }catch(error){
+
         next(error)
     }
 }
 
 export const getReviewsForProduct = async (req,res,next) => {
+
     try{
 
-        const reviews = await readReviews()
+        const product = await ProductsModel.findById(req.params.product_id).populate("reviews")
 
-        const reviewsForProduct = reviews.filter(review => review.productId === req.params.product_id)
-        
-        res.send({reviewsForProduct})
+        if(!product) return next(createHttpError(404,`product with id: ${req.params.product_id} not foud`))
 
+        const reviews = product.reviews
+
+        res.send(product.reviews)
 
     }catch(error){
+
         next(error)
     }
 }
 
 
 export const getSingleReview = async (req,res,next) => {
+
     try{
 
-        const reviews = await readReviews()
+        const review = await ReviewsModel.findById(req.params.id)
 
-        const reviewsForProduct = reviews.filter(review => review.productId === req.params.product_id)
+        if(!review) return next(createHttpError(404,`review with id: ${req.params.id} not foud`))
 
-        const foundReview = reviewsForProduct.find(review => review.review_id === req.params.id)
-        
-        res.send({foundReview})
-
+        res.send(review)
 
     }catch(error){
+
         next(error)
     }
 }
 
 
 export const updateReview = async (req,res,next) => {
+
     try{
 
-        const reviews = await readReviews()
+        const updatedReview = await ReviewsModel.findByIdAndUpdate(req.params.id, req.body, {new:true, runValidators:true})
 
-        const reviewToUpdateIndex = reviews.findIndex(review => review.review_id === req.params.id)
-        
-        const reviewToUpdate = reviews[reviewToUpdateIndex]
-
-        const updatedReview = {...reviewToUpdate,...req.body, updatedAt: new Date()}
-
-        reviews[reviewToUpdateIndex] = updatedReview
-
-        await writeReviews(reviews)
+        if(!updateReview) return next(createHttpError(404,`review with id: ${req.params.id} not foud`))
 
         res.send(updatedReview)
 
-
     }catch(error){
+
         next(error)
     }
 }
 
 export const deleteReview = async (req,res,next) => {
+
     try{
 
-        const reviews = await readReviews()
+        const updatedProduct = await ProductsModel.findByIdAndUpdate(req.params.product_id, 
+            { $pull:{ reviews:{ _id: req.params.id } } }, 
+            { new:true, runValidators: true})
 
-        const remainingReviews = reviews.filter(review => review.review_id !== req.params.id)
+        if(!updatedProduct) return next(createHttpError(404,`product with id: ${req.params.product_id} not foud`))
 
-        await writeReviews(remainingReviews)
-        
-        res.status(204).send("review with id:"+ req.params.id + "was deleted")
+        const deletedReview = await ReviewsModel.findByIdAndDelete(req.params.id)
 
+        if(!deletedReview)  return next(createHttpError(404,`review with id: ${req.params.id} not foud`))
+
+        res.status(204).send() 
+       
 
     }catch(error){
+
         next(error)
     }
 }
