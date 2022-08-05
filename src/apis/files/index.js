@@ -3,8 +3,8 @@ import multer from "multer"
 import {v2 as cloudinary} from "cloudinary"
 import {CloudinaryStorage} from "multer-storage-cloudinary"
 import { extname } from "path"
-import ProductsModel from "../products/model.js"
-import createHttpError from "http-errors"
+import { pipeline } from "stream"
+import json2csv from "json2csv"
 
 
 
@@ -23,16 +23,26 @@ const filesRouter = express.Router()
 
 
   filesRouter.post("/cloudinary/:id",cloudinaryUploader,async (req,res,next)=>{
-
     try {
+      const products = await readProducts()
+      const productToUpdateIndex =products.findIndex(product => product.product_id === req.params.id)
+
+      if(productToUpdateIndex !== -1) {
+        console.log(req.file)
+
+        const fileName = req.params.id + extname(req.file.originalname)
+        products[productToUpdateIndex] = {...products[productToUpdateIndex], imageUrl: req.file.path }
+
+        await writeProducts(products)
+
+
+      }
+
       
-        const product = await ProductsModel.findByIdAndUpdate(req.params.id,{ imageUrl :req.file.path }, {new: true, runValidators:true} )
+      res.send()
 
-        if(!product) return next(createHttpError(404,`Product with id: ${req.params.id} not found`))
-
-        res.send(product)
-       
-      } catch (error) {
+      
+    } catch (error) {
       next(error)
       
     }

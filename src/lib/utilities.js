@@ -27,7 +27,7 @@ export const postProduct = async (req,res,next) => {
 export const getProducts = async (req,res,next) => {
     try{
        
-        const products = await ProductsModel.find().populate("reviews")
+        const products = await ProductsModel.find()
 
         res.send(products)
        
@@ -41,9 +41,9 @@ export const getProductById = async (req,res,next) => {
 
     try{
 
-        const product = await ProductsModel.findById(req.params.id).populate("reviews")
+        const product = await ProductsModel.findById(req.params.id)
 
-        if(!product) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
+        if(!product) next(createHttpError(404,`product with id: ${req.params.id} not found`))
 
         res.send(product)
 
@@ -59,7 +59,7 @@ export const updateProduct = async (req,res,next) => {
 
         const updatedProduct = await ProductsModel.findByIdAndUpdate( req.params.id, req.body, {new:true, runValidators:true})
 
-        if(!updatedProduct) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
+        if(!updatedProduct) next(createHttpError(404,`product with id: ${req.params.id} not found`))
 
        res.send(updatedProduct)
 
@@ -75,7 +75,7 @@ export const deleteProduct = async (req,res,next) => {
 
         const deletedProdut = await ProductsModel.findByIdAndDelete(req.params.id)
 
-        if(!deleteProduct) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
+        if(!deleteProduct) next(createHttpError(404,`product with id: ${req.params.id} not found`))
         
         res.status(204).send()
 
