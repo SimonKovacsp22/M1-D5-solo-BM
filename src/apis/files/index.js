@@ -2,7 +2,6 @@ import express from "express"
 import multer from "multer"
 import {v2 as cloudinary} from "cloudinary"
 import {CloudinaryStorage} from "multer-storage-cloudinary"
-import { extname } from "path"
 import ProductsModel from "../products/model.js"
 import createHttpError from "http-errors"
 

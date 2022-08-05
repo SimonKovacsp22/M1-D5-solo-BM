@@ -28,6 +28,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^2.0.19",
     "pdfmake": "^0.2.5",
+    "query-to-mongo": "^0.10.2",
     "uniqid": "^5.4.0"
   },
   "devDependencies": {

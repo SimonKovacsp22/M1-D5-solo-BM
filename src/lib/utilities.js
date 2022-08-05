@@ -1,6 +1,6 @@
-import { sendEmail } from "./email-tools.js"
 import ProductsModel from "../apis/products/model.js"
 import createHttpError from "http-errors"
+import q2m from "query-to-mongo"
 
 
 
@@ -26,10 +26,19 @@ export const postProduct = async (req,res,next) => {
 
 export const getProducts = async (req,res,next) => {
     try{
-       
-        const products = await ProductsModel.find().populate("reviews")
 
-        res.send(products)
+        const mongoQuery = q2m(req.query)
+
+        console.log(mongoQuery)
+
+        const total = await ProductsModel.countDocuments(mongoQuery.criteria)
+
+        const products = await ProductsModel.find(mongoQuery.criteria, mongoQuery.options.fields).limit(mongoQuery.options.limit)
+        .skip(mongoQuery.criteria.skip).sort(mongoQuery.options.sort).populate("reviews")
+
+        const totalPages = Math.ceil(total / mongoQuery.options.limit)
+
+        res.send({total, totalPages, products})
        
     } catch(error) {
         
