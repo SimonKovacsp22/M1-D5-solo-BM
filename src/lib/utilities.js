@@ -52,7 +52,7 @@ export const getProductById = async (req,res,next) => {
 
     try{
 
-        const product = await ProductsModel.findById(req.params.id).polulate("reviews")
+        const product = await ProductsModel.findById(req.params.id)
 
         if(!product) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
 
