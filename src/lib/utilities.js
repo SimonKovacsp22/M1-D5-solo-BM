@@ -38,7 +38,9 @@ export const getProducts = async (req,res,next) => {
 
         const totalPages = Math.ceil(total / mongoQuery.options.limit)
 
-        res.send({total, totalPages, products})
+        const limit = mongoQuery.options.limit
+
+        res.send({total, totalPages, limit, products})
        
     } catch(error) {
         
@@ -50,7 +52,7 @@ export const getProductById = async (req,res,next) => {
 
     try{
 
-        const product = await ProductsModel.findById(req.params.id).populate("reviews")
+        const product = await ProductsModel.findById(req.params.id).polulate("reviews")
 
         if(!product) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
 
