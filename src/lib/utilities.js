@@ -52,7 +52,7 @@ export const getProductById = async (req,res,next) => {
 
     try{
 
-        const product = await ProductsModel.findById(req.params.id)
+        const product = await ProductsModel.findById(req.params.id).populate("reviews")
 
         if(!product) return next(createHttpError(404,`product with id: ${req.params.id} not found`))
 
